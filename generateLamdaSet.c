@@ -22,11 +22,12 @@ int main(){
 	int firstCharacterEachLine = 0;
 	int nextCharacterEachLine = 0;
 	
-	//int activePos = 0;
-	int numberOfActiveColumn = 2;
+	int numberOfActiveColumn = 2; //number of active column you want
 	int activePos[numberOfActiveColumn];
+	//active position value
 	activePos[0] = 0;
 	activePos[1] = 30;
+	//active position value
 	int tmp1[numberOfActiveColumn];
 	int tmp2[numberOfActiveColumn];
 
@@ -41,14 +42,10 @@ int main(){
 	int countRand = 0;
 	int j = 0;
 	for(int line = 0; line < 256; line++){
-		
 			// Random character each line
-			
 			for(int i = 0; i < 33; i++){
 				if(j == numberOfActiveColumn){
 					j = 0;
-					//tmp1 = 0;
-					//tmp2 = 0;
 				}
 				if(i == activePos[j]){
 					if(tmp2[j] == 16){
@@ -81,11 +78,6 @@ int main(){
 		
 	}
 	fclose(fptr);
-	/*
-	for(int i =0; i < 32; i++){
-		printf("%c",str[i]);
-	}*/	
-	//Read hex number from string convert it to int and store it inside inputBlock array
 	printf("\n");
 	int inputBlock[16];
 	int countValueInputBlock = 0;
