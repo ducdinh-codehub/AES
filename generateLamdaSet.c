@@ -21,45 +21,64 @@ int main(){
 	char str[33];
 	int firstCharacterEachLine = 0;
 	int nextCharacterEachLine = 0;
-	int tmp1 = 0;
-	int tmp2 = 0;
-	int activePos = 0;
-	if(activePos % 2 == 0){ // active position first value have to start with even number.
-		activePos = activePos % 31; // start value of activePosition can't reach out of 30.
+	
+	//int activePos = 0;
+	int numberOfActiveColumn = 2;
+	int activePos[numberOfActiveColumn];
+	activePos[0] = 0;
+	activePos[1] = 30;
+	int tmp1[numberOfActiveColumn];
+	int tmp2[numberOfActiveColumn];
 
+	for(int i = 0; i < numberOfActiveColumn; i++){
+		if(activePos[i] % 2 == 0){ // active position first value have to start with even number.
+			activePos[i] = activePos[i] % 31; // start value of activePosition can't reach out of 30.
+		}
+		tmp1[i] = 0;
+		tmp2[i] = 0;
 	}
 	char startValue[30];
 	int countRand = 0;
+	int j = 0;
 	for(int line = 0; line < 256; line++){
-		// Random character each line
-		for(int i = 0; i < 33; i++){
-			if(i == activePos){
-				if(tmp2 == 16){
-					tmp1 += 1;
-					tmp2 = 0;
+		
+			// Random character each line
+			
+			for(int i = 0; i < 33; i++){
+				if(j == numberOfActiveColumn){
+					j = 0;
+					//tmp1 = 0;
+					//tmp2 = 0;
 				}
-				str[activePos] = checkChar(tmp1);
-
-			}
-			else if(i == activePos + 1){
-				str[activePos + 1] = checkChar(tmp2);
-				tmp2 += 1;
-			}
-			else{
-				if(i != 32){
-					if(line < 1){
-						int r = rand() % 16;
-						startValue[i] = checkChar(hexNum[r]);
-						countRand += 1;
+				if(i == activePos[j]){
+					if(tmp2[j] == 16){
+						tmp1[j] += 1;
+						tmp2[j] = 0;
 					}
-					str[i] = startValue[i];
-
-				}else{
-					str[i] = '\n';
+					str[activePos[j]] = checkChar(tmp1[j]);
 				}
+				else if(i == activePos[j] + 1){
+					str[activePos[j] + 1] = checkChar(tmp2[j]);
+					tmp2[j] += 1;
+					j += 1;
+				}
+
+				else{
+					if(i != 32){
+						if(line < 1){
+							int r = rand() % 16;
+							startValue[i] = checkChar(hexNum[r]);
+							countRand += 1;
+						}
+						str[i] = startValue[i];
+
+					}else{
+						str[i] = '\n';
+					}
+				}
+				fputc(str[i], fptr);
 			}
-			fputc(str[i], fptr);
-		}
+		
 	}
 	fclose(fptr);
 	/*
