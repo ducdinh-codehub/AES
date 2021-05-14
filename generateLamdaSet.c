@@ -22,11 +22,32 @@ int main(){
 	int firstCharacterEachLine = 0;
 	int nextCharacterEachLine = 0;
 	
-	int numberOfActiveColumn = 2; //number of active column you want
+	int numberOfActiveColumn = 6; //number of active column you want
 	int activePos[numberOfActiveColumn];
 	//active position value
-	activePos[0] = 0;
-	activePos[1] = 30;
+	activePos[0] = 30;
+	activePos[1] = 8;
+	activePos[2] = 4;
+	activePos[3] = 0;
+	activePos[4] = 20;
+	activePos[5] = 10;
+
+	//Sort activePos from lowest to highest
+	for(int i = 0; i < numberOfActiveColumn; i++){
+		for(int j = i + 1; j < numberOfActiveColumn; j++){
+			if(activePos[i] > activePos[j]){
+				int tmp = activePos[i];
+				activePos[i] = activePos[j];
+				activePos[j] = tmp;
+			}
+		}
+	} 
+	//Check section
+	/*
+	for(int i = 0 ; i < numberOfActiveColumn; i++){
+		printf("%d\n",activePos[i]);
+	}*/
+	
 	//active position value
 	int tmp1[numberOfActiveColumn];
 	int tmp2[numberOfActiveColumn];
@@ -97,6 +118,7 @@ int main(){
 	for(int i = 0; i < 16; i++){
 		printf("%x \n",inputBlock[i]);
 	}
+	
 
 	return 0;
 }
