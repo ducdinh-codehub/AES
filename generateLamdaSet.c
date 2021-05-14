@@ -30,8 +30,7 @@ int main(){
 	int inputBlock[16];
 	int countValueInputBlock = 0;
 	char str2[32];
-	strcmp(str2,str);
-	//str2 = str;
+	strcpy(str2,str);
 	for(int i = 0; i < 32; i++){
 		if(i%2!=0){
 			inputBlock[countValueInputBlock] = (inputBlock[countValueInputBlock] << 4) 
