@@ -12,19 +12,29 @@ int checkNumber(char a);
 char checkChar(int a);
 int main(){
 	srand(time(NULL));
-	//int a = (hexNum[0] << 8) | hexNum[15];
+	FILE *fptr;
+	fptr = fopen("lambdaSet.txt","w");
+	//Concatenate 2 hexa numbers
 	//int a = (hexNum[1] << 4) | hexNum[3];
-	//printf("%x",a);
 	
-	//Write hex number
-	char str[32];
-	for(int i =0; i < 32; i++){
-		int r = rand() % 16;
-		str[i] = checkChar(hexNum[r]);
+	//Random generate and Write hex number 
+	char str[33];
+	for(int line = 0; line < 256; line++){
+		for(int i =0; i < 33; i++){
+			if(i != 32){
+				int r = rand() % 16;
+				str[i] = checkChar(hexNum[r]);
+			}else{
+				str[i] = '\n';
+			}
+			fputc(str[i], fptr);
+		}
 	}
+	fclose(fptr);
+	/*
 	for(int i =0; i < 32; i++){
 		printf("%c",str[i]);
-	}	
+	}*/	
 	//Read hex number from string convert it to int and store it inside inputBlock array
 	printf("\n");
 	int inputBlock[16];
@@ -46,24 +56,6 @@ int main(){
 		printf("%x \n",inputBlock[i]);
 	}
 
-	/*
-	int i2;
-	sscanf (str2,"%d",&i2);
-	printf("%x",i2);*/
-	/*
-	int lamdaSet[32];
-	int numberOfByteInSet = 1;// 32 byte = 256 bit
-	int numberOfValueInOneset = 16;
-	char oneSet[100];
-	for(int i = 0; i < numberOfByteInSet; i++){
-		for(int j = 0; j < numberOfValueInOneset; j++){
-			if(j == 0){
-				oneSet = "" + hexNum[]
-			}
-			int value;
-			oneSet = oneSet + value; 
-		}
-	}*/
 	return 0;
 }
 int checkNumber(char a){
