@@ -17,15 +17,46 @@ int main(){
 	//Concatenate 2 hexa numbers
 	//int a = (hexNum[1] << 4) | hexNum[3];
 	
-	//Random generate and Write hex number 
+	//Random generate and Write hex number to file
 	char str[33];
+	int firstCharacterEachLine = 0;
+	int nextCharacterEachLine = 0;
+	int tmp1 = 0;
+	int tmp2 = 0;
+	int activePos = 0;
+	if(activePos % 2 == 0){ // active position first value have to start with even number.
+		activePos = activePos % 31; // start value of activePosition can't reach out of 30.
+
+	}
+	char startValue[30];
+	int countRand = 0;
 	for(int line = 0; line < 256; line++){
-		for(int i =0; i < 33; i++){
-			if(i != 32){
-				int r = rand() % 16;
-				str[i] = checkChar(hexNum[r]);
-			}else{
-				str[i] = '\n';
+		// Random character each line
+		for(int i = 0; i < 33; i++){
+			if(i == activePos){
+				if(tmp2 == 16){
+					tmp1 += 1;
+					tmp2 = 0;
+				}
+				str[activePos] = checkChar(tmp1);
+
+			}
+			else if(i == activePos + 1){
+				str[activePos + 1] = checkChar(tmp2);
+				tmp2 += 1;
+			}
+			else{
+				if(i != 32){
+					if(line < 1){
+						int r = rand() % 16;
+						startValue[i] = checkChar(hexNum[r]);
+						countRand += 1;
+					}
+					str[i] = startValue[i];
+
+				}else{
+					str[i] = '\n';
+				}
 			}
 			fputc(str[i], fptr);
 		}
