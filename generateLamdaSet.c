@@ -12,6 +12,7 @@ int checkNumber(char a);
 char checkChar(int a);
 int main(){
 	srand(time(NULL));
+
 	FILE *fptr;
 	fptr = fopen("lambdaSet.txt","w");
 	//Concatenate 2 hexa numbers
@@ -42,11 +43,6 @@ int main(){
 			}
 		}
 	} 
-	//Check section
-	/*
-	for(int i = 0 ; i < numberOfActiveColumn; i++){
-		printf("%d\n",activePos[i]);
-	}*/
 	
 	//active position value
 	int tmp1[numberOfActiveColumn];
@@ -99,29 +95,41 @@ int main(){
 		
 	}
 	fclose(fptr);
+	//Read lambda set from file
 	printf("\n");
-	int inputBlock[16];
-	int countValueInputBlock = 0;
+	fptr = fopen("lambdaSet.txt","r");
+	char* line = NULL;
+	size_t len = 0;
+	ssize_t read;
 	char str2[32];
-	strcpy(str2,str);
-	for(int i = 0; i < 32; i++){
-		if(i%2!=0){
-			inputBlock[countValueInputBlock] = (inputBlock[countValueInputBlock] << 4) 
-									| hexNum[checkNumber(str2[i])];
-			countValueInputBlock++;
+	char str3[33];
+	while((read = getline(&line, &len, fptr)) != -1){
+		int inputBlock[16];
+		int countValueInputBlock = 0;
+		strcpy(str2,line);
+		strcpy(str3,str2);
+		
+		for(int i = 0; i < 32; i++){
+			if(i%2!=0){
+				inputBlock[countValueInputBlock] = (inputBlock[countValueInputBlock] << 4) 
+										| hexNum[checkNumber(str3[i])];
+				countValueInputBlock++;
+			}
+			inputBlock[countValueInputBlock] = hexNum[checkNumber(str3[i])];
 		}
-		inputBlock[countValueInputBlock] = hexNum[checkNumber(str2[i])];
-		printf("%c ",str2[i]);
-		printf(" ->Num: %d\n",checkNumber(str2[i]));
+		printf("\n");
+		for(int i = 0; i < 16; i++){
+			if(inputBlock[i] < 16){
+				printf("0%x",inputBlock[i]);
+			}else{
+				printf("%x",inputBlock[i]);
+			}	
+		}
 	}
 	printf("\n");
-	for(int i = 0; i < 16; i++){
-		printf("%x \n",inputBlock[i]);
-	}
-	
-
 	return 0;
 }
+//Function section
 int checkNumber(char a){
 	int rst = 0;
 	switch (a){
