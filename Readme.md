@@ -1,6 +1,7 @@
 <html>
 <h1>Project: Security for Data and System-Online</h1>
-<h2>Project title: SQUARE Cryptanalysis on the 4-round AES</h2>
+<span>Project title: SQUARE Cryptanalysis on the 4-round AES</span>
+  </br>
 <span>Student name: Duc Dinh Anh</span>
   </br>
 <span>Student Id: M20.ICT.001</span>
