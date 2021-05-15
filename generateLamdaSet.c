@@ -117,6 +117,9 @@ int main(){
 			}
 			inputBlock[countValueInputBlock] = hexNum[checkNumber(str3[i])];
 		}
+		
+
+		//Checking section
 		printf("\n");
 		for(int i = 0; i < 16; i++){
 			if(inputBlock[i] < 16){
@@ -125,6 +128,7 @@ int main(){
 				printf("%x",inputBlock[i]);
 			}	
 		}
+		
 	}
 	printf("\n");
 	return 0;

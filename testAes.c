@@ -1,4 +1,6 @@
 #include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
 //All function for encryption
 int mulp2(int in);
 int mulp3(int in);
@@ -11,7 +13,14 @@ void mixColumns(int in[16]);
 void keySchedule(int in[16], int numColRcon);
 void addRoundKey(int input[16], int key[16]);
 char checkChar(int a);
+int checkNumber(char a);
 //Global variable for encryption
+int hexNum[16] = {
+	0x0,0x1,0x2,0x3,
+	0x4,0x5,0x6,0x7,
+	0x8,0x9,0xa,0xb,
+	0xc,0xd,0xe,0xf
+};
 int sbox[256] =   {
 	//0     1    2      3     4    5     6     7      8    9     A      B    C     D     E     F
 	0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76, //0
@@ -47,81 +56,88 @@ int main(){
 	printf("Your string: %s\n",plainText);
 	*/
 	// Create block
-	/*
-	int inputBlock[16] = {
-		//0		1		2		3	
-		0x19, 0xa0,   0x9a,    0xe9,
-		0x3d, 0xf4,   0xc6,    0xf8,
-		0xe3, 0xe2,	  0x8d,    0x48,
-		0xbe, 0x2b,   0x2a,    0x08
-	};*/
 	FILE *ftpr;
-	ftpr = fopen("aesResult.txt","w");
-	int inputBlock[16] = {
-		//0		1		2		3	
-		0x32, 0x88,   0x31,    0xe0,
-		0x43, 0x5a,   0x31,    0x37,
-		0xf6, 0x30,	  0x98,    0x07,
-		0xa8, 0x8d,   0xa2,    0x34
-	};
-	int keyBlock[16] = {
-		//0		1		2		3
-		0x2b, 	0x28, 	0xab, 	0x09,
-		0x7e, 	0xae, 	0xf7, 	0xcf,
-		0x15, 	0xd2,	0x15, 	0x4f,
-		0x16,	0xa6,	0x88, 	0x3c
-	};
-	addRoundKey(inputBlock,keyBlock);
-	for(int time = 0 ; time < 9; time++){
-		//Checking section
-		displayArray(inputBlock,"Original");
+	FILE *fw;
+	//ftpr = fopen("lambdaSet.txt", "r");
+	ftpr = fopen("aesInput.txt", "r");
+	char* line = NULL;
+	size_t len = 0;
+	ssize_t read;
+	while((read = getline(&line, &len, ftpr)) != -1){
+		int inputBlock[16];
+		char str2[32];
+		char str3[33];
+		int countValueInputBlock = 0;
+		strcpy(str2,line);
+		strcpy(str3,str2);
+		
+		for(int i = 0; i < 32; i++){
+			if(i%2!=0){
+				inputBlock[countValueInputBlock] = (inputBlock[countValueInputBlock] << 4) 
+										| hexNum[checkNumber(str3[i])];
+				countValueInputBlock++;
+			}
+			inputBlock[countValueInputBlock] = hexNum[checkNumber(str3[i])];
+		}
 
-		//SubBytes
+		int keyBlock[16] = {
+			//0		1		2		3
+			0x2b, 	0x28, 	0xab, 	0x09,
+			0x7e, 	0xae, 	0xf7, 	0xcf,
+			0x15, 	0xd2,	0x15, 	0x4f,
+			0x16,	0xa6,	0x88, 	0x3c
+		};
+
+		addRoundKey(inputBlock,keyBlock);
+		for(int time = 0 ; time < 9; time++){
+			//Checking section
+			displayArray(inputBlock,"Original");
+
+			//SubBytes
+			subBytes(inputBlock);
+			//Checking section
+			displayArray(inputBlock,"After SubBytes");
+
+			//ShiftRow
+			shiftRow(inputBlock);
+			//Checking section
+			displayArray(inputBlock,"After ShiftRow");
+
+			//MixColumns
+			mixColumns(inputBlock);	
+			//Checking section
+			displayArray(inputBlock,"After MixColumns");
+
+			//KeySchedule
+			displayArray(keyBlock,"Original key block");
+			keySchedule(keyBlock, time);
+			//Checking section
+			displayArray(keyBlock,"New keyBlock");
+
+			//AddRoundKey
+			addRoundKey(inputBlock,keyBlock);
+			//Checking section
+			displayArray(inputBlock,"After AddRoundKey");
+		}
+		//Ending round
 		subBytes(inputBlock);
-		//Checking section
-		displayArray(inputBlock,"After SubBytes");
-
-		//ShiftRow
 		shiftRow(inputBlock);
-		//Checking section
-		displayArray(inputBlock,"After ShiftRow");
-
-		//MixColumns
-		mixColumns(inputBlock);	
-		//Checking section
-		displayArray(inputBlock,"After MixColumns");
-
-		//KeySchedule
-		displayArray(keyBlock,"Original key block");
-		keySchedule(keyBlock, time);
-		//Checking section
-		displayArray(keyBlock,"New keyBlock");
-
-		//AddRoundKey
+		keySchedule(keyBlock,9);
 		addRoundKey(inputBlock,keyBlock);
 		//Checking section
-		displayArray(inputBlock,"After AddRoundKey");
+		displayArray(inputBlock, "Encryption result");
+		
+		//Writing result to file
+		fw = fopen("aesResult.txt","a");
+		for(int k = 0; k < 16; k++){
+			fputc(checkChar(inputBlock[k] >> 4), fw);
+			fputc(checkChar(inputBlock[k] & 0xf), fw);
+		}
+		fputc('\n',fw);
 	}
-	//Ending round
-	subBytes(inputBlock);
-	shiftRow(inputBlock);
-	keySchedule(keyBlock,9);
-	addRoundKey(inputBlock,keyBlock);
-	//Checking section
-	displayArray(inputBlock, "Encryption result");
-	
-	//Writing result to file
-
-	for(int k = 0; k < 16; k++){
-		//printf("%d and %d\n", (inputBlock[k] >> 4), (inputBlock[k] & 0xf));
-		fputc(checkChar(inputBlock[k] >> 4), ftpr);
-		fputc(checkChar(inputBlock[k] & 0xf), ftpr);
-	}
-	fputc('\n',ftpr);
-
 	return 0;
 }
-
+//All function
 int mulp2(int in){
 	int kq = in << 1;
 	if(kq>256) kq = kq ^ 0x11B;
@@ -336,6 +352,78 @@ char checkChar(int a){
 			break;
 		case 15:
 			rst = 'f';
+			break;
+	}
+	return rst;
+}
+int checkNumber(char a){
+	int rst = 0;
+	switch (a){
+		case '0':
+			rst = 0;
+			break;
+		case '1':
+			rst = 1;
+			break;
+		case '2':
+			rst = 2;
+			break;
+		case '3':
+			rst = 3;
+			break;
+		case '4':
+			rst = 4;
+			break;
+		case '5':
+			rst = 5;
+			break;
+		case '6':
+			rst = 6;
+			break;
+		case '7':
+			rst = 7;
+			break;
+		case '8':
+			rst = 8;
+			break;
+		case '9':
+			rst = 9;
+			break;
+		case 'a':
+			rst = 10;
+			break;
+		case 'A':
+			rst = 10;
+			break;
+		case 'b':
+			rst = 11;
+			break;
+		case 'B':
+			rst = 11;
+			break;
+		case 'c':
+			rst = 12;
+			break;
+		case 'C':
+			rst = 12;
+			break;
+		case 'd':
+			rst = 13;
+			break;
+		case 'D':
+			rst = 13;
+			break;
+		case 'e':
+			rst = 14;
+			break;
+		case 'E':
+			rst = 14;
+			break;
+		case 'f':
+			rst = 15;
+			break;
+		case 'F':
+			rst = 15;
 			break;
 	}
 	return rst;
