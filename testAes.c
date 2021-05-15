@@ -10,6 +10,7 @@ void shiftRow(int in[16]);
 void mixColumns(int in[16]);
 void keySchedule(int in[16], int numColRcon);
 void addRoundKey(int input[16], int key[16]);
+char checkChar(int a);
 //Global variable for encryption
 int sbox[256] =   {
 	//0     1    2      3     4    5     6     7      8    9     A      B    C     D     E     F
@@ -46,12 +47,22 @@ int main(){
 	printf("Your string: %s\n",plainText);
 	*/
 	// Create block
+	/*
 	int inputBlock[16] = {
 		//0		1		2		3	
 		0x19, 0xa0,   0x9a,    0xe9,
 		0x3d, 0xf4,   0xc6,    0xf8,
 		0xe3, 0xe2,	  0x8d,    0x48,
 		0xbe, 0x2b,   0x2a,    0x08
+	};*/
+	FILE *ftpr;
+	ftpr = fopen("aesResult.txt","w");
+	int inputBlock[16] = {
+		//0		1		2		3	
+		0x32, 0x88,   0x31,    0xe0,
+		0x43, 0x5a,   0x31,    0x37,
+		0xf6, 0x30,	  0x98,    0x07,
+		0xa8, 0x8d,   0xa2,    0x34
 	};
 	int keyBlock[16] = {
 		//0		1		2		3
@@ -60,6 +71,7 @@ int main(){
 		0x15, 	0xd2,	0x15, 	0x4f,
 		0x16,	0xa6,	0x88, 	0x3c
 	};
+	addRoundKey(inputBlock,keyBlock);
 	for(int time = 0 ; time < 9; time++){
 		//Checking section
 		displayArray(inputBlock,"Original");
@@ -97,6 +109,15 @@ int main(){
 	addRoundKey(inputBlock,keyBlock);
 	//Checking section
 	displayArray(inputBlock, "Encryption result");
+	
+	//Writing result to file
+
+	for(int k = 0; k < 16; k++){
+		//printf("%d and %d\n", (inputBlock[k] >> 4), (inputBlock[k] & 0xf));
+		fputc(checkChar(inputBlock[k] >> 4), ftpr);
+		fputc(checkChar(inputBlock[k] & 0xf), ftpr);
+	}
+	fputc('\n',ftpr);
 
 	return 0;
 }
@@ -126,7 +147,11 @@ void displayArray(int in[16],char displayName[50]){
 		if(i!=0 && i%4==0){
 			printf("\n");
 		}
-		printf("%x  ",in[i]);
+		if(in[i] < 16){
+			printf("0%x  ",in[i]);
+		}else{
+			printf("%x  ",in[i]);
+		}
 	}
 	printf("\n");
 }
@@ -260,4 +285,58 @@ void addRoundKey(int input[16], int key[16]){
 				^ key[4 * row + col]) & 0xff;
 		}
 	}
+}
+char checkChar(int a){
+	char rst;
+	switch(a){
+		case 0:
+			rst = '0';
+			break;
+		case 1:
+			rst = '1';
+			break;
+		case 2:
+			rst = '2';
+			break;
+		case 3:
+			rst = '3';
+			break;
+		case 4:
+			rst = '4';
+			break;
+		case 5:
+			rst = '5';
+			break;
+		case 6:
+			rst = '6';
+			break;
+		case 7:
+			rst = '7';
+			break;
+		case 8:
+			rst = '8';
+			break;
+		case 9:
+			rst = '9';
+			break;
+		case 10:
+			rst = 'a';
+			break;
+		case 11:
+			rst = 'b';
+			break;
+		case 12:
+			rst = 'c';
+			break;
+		case 13:
+			rst = 'd';
+			break;
+		case 14:
+			rst = 'e';
+			break;
+		case 15:
+			rst = 'f';
+			break;
+	}
+	return rst;
 }
